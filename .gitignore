@@ -1,0 +1,27 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / VS Code
+.vscode/
+*.code-workspace
+
+# Archivos temporales
+*.tmp
+*.bak
+*~
+
+# Máquinas virtuales (si guardas VMs de prácticas junto al repo)
+*.vdi
+*.vmdk
+*.ova
+*.vbox
+
+# Comprimidos que no deben subirse por accidente
+*.zip
+*.rar
+
+# Carpeta de entregas si en algún momento quieres tenerla local y no publicarla
+# (descomenta la siguiente línea si NO quieres que las entregas del alumnado vayan al repo del profesor)
+# entregas/
