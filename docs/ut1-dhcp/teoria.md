@@ -19,7 +19,7 @@ title: UT1.2 - Teoría del servicio DHCP
 | g) | Se han integrado en el servicio opciones adicionales de configuración. |
 | h) | Se ha verificado la correcta asignación de los parámetros. |
 
-> Esta página cubre los criterios **a, b y c** (fundamento teórico). Los criterios **d a h** (instalación, configuración y verificación) se trabajan en la [práctica paso a paso](practica1.md).
+> Esta página cubre los criterios **a, b y c** (fundamento teórico). Los criterios **d a h** (instalación, configuración y verificación) se trabajan en las prácticas.
 
 ## 1. Introducción (CE-a)
 

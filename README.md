@@ -16,8 +16,6 @@ Para superar el módulo, el alumnado debe alcanzar los siguientes **resultados d
 - **RA8.** Despliega redes inalámbricas, describiendo sus características e instalando los dispositivos necesarios.
 - **RA9.** Instala y configura servicios de voz sobre IP, describiendo sus características y aplicaciones.
 
-> ⚠️ Redacción orientativa a partir de los títulos de las UT; ajústala a la redacción oficial del currículo si difiere.
-
 - 📚 **Contenido de consulta (teoría + prácticas):** publicado con GitHub Pages en `/docs`
 - 💻 **Ficheros de configuración de ejemplo:** en `/recursos`
 - 🗂️ **Gestión, presentaciones, tareas y evaluación:** en Microsoft Teams (un módulo en Trabajo de clase por UT)
