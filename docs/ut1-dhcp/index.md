@@ -11,7 +11,8 @@ En esta unidad de trabajo vas a instalar y configurar un servicio DHCP, capaz de
 ## Contenidos
 
 1. 🔁 [Repaso de redes](repaso-redes.md) — conceptos de direccionamiento IP necesarios antes de empezar.
-2. 📖 [Teoría del servicio DHCP](teoria.md) — funcionamiento, proceso DORA y tipos de asignación.
-3. 🛠️ Prácticas paso a paso — instalación y configuración del servicio en dos sistemas operativos distintos:
+2. 🖧 [Redes virtuales en VirtualBox](redes-virtualbox.md) — tipos de adaptador de red y cómo montaremos la topología del router Debian.
+3. 📖 [Teoría del servicio DHCP](teoria.md) — funcionamiento, proceso DORA y tipos de asignación.
+4. 🛠️ Prácticas paso a paso — instalación y configuración del servicio en dos sistemas operativos distintos:
    - 🪟 [Práctica: DHCP en Windows Server](practica-windows.md)
    - 🐧 [Práctica: DHCP en Ubuntu Server (`isc-dhcp-server`)](practica-ubuntu.md)

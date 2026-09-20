@@ -32,6 +32,8 @@ En el modelo cliente/servidor:
 - **Cliente:** proceso que habitualmente inicia la comunicación, envía una petición al servidor y queda a la espera de respuesta. Es el elemento **activo**.
 - **Servidor:** proceso que permanece a la espera, escuchando las posibles conexiones de los clientes. Es el elemento **pasivo**.
 
+![Modelo cliente/servidor: el cliente envía una solicitud y el servidor responde, ambos comunicados a través de la red](img/cliente-servidor.png)
+
 ### Tipos de redes según su alcance
 
 | Tipo | Significado | Ejemplo |
@@ -107,6 +109,8 @@ El modelo **OSI** ofrece una referencia teórica muy bien diseñada, pero nunca 
 
 La arquitectura TCP/IP proporciona una estructura y una serie de normas de funcionamiento para interconectar sistemas. Cada capa realiza una labor concreta, y la integración modular y jerárquica de todas ellas hace posible la comunicación. En cada capa existen protocolos que ofrecen normas estrictas para el diálogo entre sistemas.
 
+![Correspondencia entre las capas del modelo OSI (7 capas) y el modelo TCP/IP (4 capas)](img/modelo-osi-tcpip.jpg)
+
 ### Protocolos principales
 
 - **TCP/IP:** conjunto de protocolos fundamentales de Internet.
@@ -139,4 +143,4 @@ La arquitectura TCP/IP proporciona una estructura y una serie de normas de funci
 
 ---
 
-👉 Continúa con la [teoría del servicio DHCP](teoria.md).
+👉 Antes de entrar en la teoría de DHCP, repasa cómo se configura la red virtual de las prácticas: [Redes virtuales en VirtualBox](redes-virtualbox.md).
