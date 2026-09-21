@@ -19,7 +19,7 @@ title: UT1.2 - Teoría del servicio DHCP
 | g) | Se han integrado en el servicio opciones adicionales de configuración. |
 | h) | Se ha verificado la correcta asignación de los parámetros. |
 
-> Esta página cubre los criterios **a, b y c** (fundamento teórico). Los criterios **d a h** (instalación, configuración y verificación) se trabajan en las prácticas.
+> Esta página cubre los criterios **a, b y c** (fundamento teórico). Los criterios **d a h** (instalación, configuración y verificación) se trabajan en la [práctica paso a paso](practica1.md).
 
 ## 1. Introducción (CE-a)
 
@@ -57,6 +57,8 @@ Cada equipo de una red TCP/IP necesita un **nombre** y una **dirección IP únic
 - Los equipos pueden cambiar de ubicación y reconfigurarse automáticamente.
 
 > 💬 **Un mito habitual:** se suele desconfiar de DHCP por un supuesto exceso de tráfico de difusión (broadcast). En la práctica, en la mayoría de los casos ese tráfico se limita a un único paquete de difusión enviado por el cliente para descubrir el servidor DHCP — no un flujo constante de broadcasts.
+
+👉 Para comparar en la práctica ambos enfoques, consulta cómo se configura una IP manualmente en un servidor Linux: [Configuración manual de red en Ubuntu Server](config-red-ubuntu.md).
 
 ## 3. Componentes del protocolo DHCP (CE-a, CE-c)
 
