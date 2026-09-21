@@ -38,6 +38,8 @@ Todos los equipos comparten la misma red virtual interna **`net02`** (`172.16.2.
 3. Verifica que el router Debian tiene la IP `172.16.2.254/24` en su interfaz de `net02`, con reenvío de paquetes activado.
 4. Asigna al Ubuntu Server la IP estática `172.16.2.1/24` (por ejemplo mediante Netplan). El servidor DHCP no puede autoasignarse su propia IP.
 
+👉 Si necesitas repasar cómo hacerlo paso a paso: [Configuración manual de red en Ubuntu Server](config-red-ubuntu.md).
+
 ## Paso 1. Instalar el paquete (CE-d)
 
 Inicia sesión en el Ubuntu Server y, desde el terminal:
