@@ -1,0 +1,38 @@
+# =====================================================================
+#  /etc/default/isc-dhcp-server — Parámetros de arranque del servicio
+#  Módulo: Servicios en Red · 2º SMR · UT1 DHCP · Práctica UT1-P2
+#  Ruta en el repo: recursos/ut1-dhcp/ficheros-config/isc-dhcp-server
+#
+#  Este fichero NO configura el reparto de IP (eso está en dhcpd.conf):
+#  indica QUÉ fichero de configuración se usa y en QUÉ interfaz escucha.
+#  Nota: en el fichero original de Ubuntu, DHCPDv4_CONF está en la línea 4 e
+#  INTERFACESv4 en la línea 17; aquí, por los comentarios, están más abajo.
+# =====================================================================
+
+# Ruta del fichero de configuración para IPv4. Viene comentada; se descomenta
+# para dejarla explícita (el valor por defecto es el mismo).
+DHCPDv4_CONF=/etc/dhcp/dhcpd.conf
+
+# Ruta del fichero de configuración para IPv6. No usamos DHCPv6: la dejamos
+# comentada.
+#DHCPDv6_CONF=/etc/dhcp/dhcpd6.conf
+
+# Fichero donde se guarda el PID (número de proceso) del servicio IPv4.
+# Se deja el valor por defecto.
+#DHCPDv4_PID=/var/run/dhcpd.pid
+
+# Fichero de PID del servicio IPv6 (no se usa).
+#DHCPDv6_PID=/var/run/dhcpd6.pid
+
+# Opciones extra para arrancar dhcpd. No hacen falta. No uses aquí -cf ni -pf:
+# para eso están las variables de arriba.
+#OPTIONS=""
+
+# Interfaz o interfaces en las que escucha el servidor para IPv4.
+# Tiene que ser la interfaz conectada a net02 (compruébalo con: ip -br a).
+# En VirtualBox suele ser enp0s3 si es el primer adaptador, o enp0s8 si es el
+# segundo. Para varias interfaces, sepáralas con espacios: "enp0s3 enp0s8".
+INTERFACESv4="enp0s3"
+
+# Interfaces para IPv6. Vacío = el servicio DHCPv6 no se usa.
+INTERFACESv6=""

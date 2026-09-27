@@ -1,0 +1,29 @@
+# =====================================================================
+#  /etc/network/interfaces — Cliente Debian 12 configurado por DHCP
+#  Módulo: Servicios en Red · 2º SMR · UT1 DHCP · Prácticas UT1-P1 y UT1-P2
+#  Ruta en el repo: recursos/ut1-dhcp/ficheros-config/interfaces-cliente-debian
+#
+#  Debian 12 (sin escritorio) usa ifupdown y el cliente dhclient
+#  (paquete isc-dhcp-client). Con escritorio suele usar NetworkManager: en ese
+#  caso la interfaz NO debe aparecer en este fichero.
+#
+#  Aplicar:    sudo systemctl restart networking
+#              (o bien: sudo ifdown enp0s3 && sudo ifup enp0s3)
+#  Comprobar:  ip -br a   ·   ip route   ·   cat /etc/resolv.conf
+#  Pedir IP a mano:  sudo dhclient -r enp0s3 ; sudo dhclient -v enp0s3
+# =====================================================================
+
+# Carga los ficheros adicionales de configuración de interfaces, si los hay.
+source /etc/network/interfaces.d/*
+
+# Interfaz de bucle local (loopback, 127.0.0.1). Se activa siempre al arrancar.
+auto lo
+iface lo inet loopback
+
+# Interfaz conectada a la red de prácticas (net01 en UT1-P1, net02 en UT1-P2).
+# «allow-hotplug»: se activa cuando el sistema detecta la tarjeta.
+allow-hotplug enp0s3
+# «inet dhcp»: pide IP, máscara, puerta de enlace y DNS al servidor DHCP.
+# Con la reserva recibirá siempre la misma IP:
+#   192.168.10.150 (Windows Server, net01)  ·  172.16.2.50 (Ubuntu Server, net02)
+iface enp0s3 inet dhcp

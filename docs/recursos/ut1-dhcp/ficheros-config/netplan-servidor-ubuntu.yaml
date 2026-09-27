@@ -1,0 +1,38 @@
+# =====================================================================
+#  Netplan — IP estática del servidor DHCP ubuntuserver24 (Ubuntu Server 24.04 LTS)
+#  Módulo: Servicios en Red · 2º SMR · UT1 DHCP · Práctica UT1-P2
+#  Ruta en el repo: recursos/ut1-dhcp/ficheros-config/netplan-servidor-ubuntu.yaml
+#
+#  Dónde se copia: /etc/netplan/50-cloud-init.yaml. Es el fichero que crea el
+#  instalador; se sustituye su contenido por este.
+#  Si el instalador usó cloud-init, crea también
+#  /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg con esta línea:
+#      network: {config: disabled}
+#  para que cloud-init no vuelva a escribir la red al reiniciar.
+#
+#  Permisos: netplan avisa si el fichero se puede leer por todos:
+#      sudo chmod 600 /etc/netplan/50-cloud-init.yaml
+#  Aplicar:  sudo netplan try    (si no se confirma en 120 s, vuelve atrás)
+#            sudo netplan apply
+#  Comprobar: ip -br a   ·   ip route   ·   resolvectl status
+#
+#  ¡OJO! En YAML la sangría se hace con ESPACIOS, nunca con tabuladores.
+# =====================================================================
+
+network:                        # Raíz de la configuración de netplan
+  version: 2                    # Versión del formato de netplan (siempre 2)
+  renderer: networkd            # Quién aplica la configuración: systemd-networkd (lo normal en Server)
+  ethernets:                    # Sección de interfaces cableadas
+    enp0s3:                     # Interfaz conectada a net02 (compruébala con: ip -br a)
+      dhcp4: false              # Sin DHCP: el servidor DHCP necesita una IP fija
+      addresses:                # Lista de direcciones IP de la interfaz
+        - 172.16.2.1/24         # IP del servidor y máscara en notación CIDR (/24 = 255.255.255.0)
+      routes:                   # Rutas estáticas
+        - to: default           # Ruta por defecto (sustituye a la antigua «gateway4», obsoleta)
+          via: 172.16.2.254     # Router Debian, puerta de enlace de net02
+      nameservers:              # Servidores DNS que usará el propio servidor
+        addresses:              # Lista de IP de los DNS
+          - 10.151.123.21       # DNS primario de Educacyl (los mismos que en dhcpd.conf)
+          - 10.151.126.21       # DNS secundario de Educacyl
+        search:                 # Dominios de búsqueda
+          - smr2ser.org         # Permite usar nombres cortos (host → host.smr2ser.org)
