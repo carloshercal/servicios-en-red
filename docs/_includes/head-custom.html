@@ -1,0 +1,19 @@
+<!-- Mermaid para GitHub Pages: convierte los bloques ```mermaid en diagramas -->
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+  // Jekyll (kramdown + rouge) genera <div class="language-mermaid ..."><pre><code>…</code></pre></div>
+  // o <pre><code class="language-mermaid">…</code></pre>. Se sustituyen por <pre class="mermaid">.
+  document
+    .querySelectorAll("div.language-mermaid, pre > code.language-mermaid")
+    .forEach((el) => {
+      const bloque = el.tagName === "CODE" ? el.parentElement : el;
+      const diagrama = document.createElement("pre");
+      diagrama.className = "mermaid";
+      diagrama.textContent = bloque.textContent;
+      bloque.replaceWith(diagrama);
+    });
+
+  mermaid.initialize({ startOnLoad: false, theme: "default" });
+  await mermaid.run({ querySelector: "pre.mermaid" });
+</script>

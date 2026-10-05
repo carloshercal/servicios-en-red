@@ -5,7 +5,7 @@ title: "UT2 · Servicios de resolución de nombres (DNS)"
 # UT2 · Instalación de servicios de resolución de nombres (DNS)
 
 > **Módulo:** Servicios en Red · 2º CFGM Sistemas Microinformáticos y Redes · Curso 2026/2027
-> **Duración:** 18 h · **Fechas:** 08/10/2026 – 29/10/2026
+> **Duración:** 18 h
 > [← Volver a la portada del módulo](../index.md)
 
 ## Resultado de aprendizaje
