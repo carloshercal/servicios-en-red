@@ -83,8 +83,9 @@ Localiza y edita estas directivas:
 # línea 10: nombre del dominio
 option domain-name "smr2ser.org";
 
-# línea 11: hostname del DNS o su IP
-option domain-name-servers educacyl;
+# línea 11: hostname del DNS o su IP - Las IPs son del DNS de Educacyl
+# Si trabajas fuera de la red de Educacyl puedes poner las de Google: 8.8.8.8, 8.8.4.4
+option domain-name-servers 10.151.123.21, 10.151.126.21;
 
 # líneas 13, 14 y 15: tiempos de concesión (en segundos)
 default-lease-time 86400;
@@ -104,6 +105,8 @@ subnet 172.16.2.0 netmask 255.255.255.0 {
     option routers 172.16.2.254;
     # máscara de subred
     option subnet-mask 255.255.255.0;
+    # dirección de broadcast
+    option broadcast-address 172.16.2.255;
     # rango de direcciones IP
     range 172.16.2.101 172.16.2.200;
 }
