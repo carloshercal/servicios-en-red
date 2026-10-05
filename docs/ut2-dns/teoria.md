@@ -66,15 +66,20 @@ title: "UT2 · Teoría: servicio de resolución de nombres (DNS)"
 | Ejemplos | DNI, nombres NetBIOS de Windows | Teléfonos (`0034 923 …`), rutas de ficheros (`/home/alumno/docs`), **DNS** |
 
 ```mermaid
-flowchart TB
+flowchart LR
+    %% LR coloca los dos bloques uno al lado del otro, en el orden en que se declaran
     subgraph Plano["Sistema plano: conflicto"]
+        direction TB
         A1["PC-Alice<br/>(empresa Alfa)"] -.-|"¡mismo nombre!"| A2["PC-Alice<br/>(empresa Beta)"]
     end
     subgraph Jerarquico["Sistema jerárquico: sin conflicto"]
+        direction TB
         ES(("es")) --> ALFA(("alfa")) & BETA(("beta"))
         ALFA --> P1["pc-alice.alfa.es"] & P2["pc-bob.alfa.es"]
         BETA --> P3["pc-alice.beta.es"]
     end
+    %% Enlace invisible: obliga a dibujar «Plano» a la izquierda y «Jerárquico» a la derecha
+    Plano ~~~ Jerarquico
 ```
 
 ---
