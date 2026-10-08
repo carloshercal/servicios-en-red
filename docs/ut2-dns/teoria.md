@@ -201,7 +201,13 @@ flowchart TB
 
 ### Actividad en el aula 2 · Localiza los niveles
 
-Para cada nombre, indica el TLD, el dominio de 2º nivel y si es un ccTLD o un gTLD: `www.educa.jcyl.es`, `es.wikipedia.org`, `mail.google.com`, `www.ual.es`, `ns1.smr2ser.test`.
+Nombres: `www.educa.jcyl.es`, `es.wikipedia.org`, `mail.google.com`, `www.ual.es`, `ns1.smr2ser.test`.
+
+1. Separa cada nombre en etiquetas y léelo **de derecha a izquierda**, empezando por la raíz (`.`).
+2. Dibuja **un único árbol** con la raíz arriba y cuelga de él los cinco nombres. Si dos nombres comparten un nodo, no lo repitas.
+3. Para cada nombre, indica el TLD, si es un ccTLD o un gTLD y el dominio de 2º nivel.
+
+> Piensa: ¿cuántos nodos `www` y cuántos `es` aparecen en tu árbol? ¿Hay algún conflicto? ¿De qué tipo es el TLD `test`?
 
 ---
 
@@ -400,6 +406,29 @@ sequenceDiagram
 
 > 🔒 **Seguridad:** las transferencias deben permitirse **solo a los servidores secundarios** (en Windows, «Solo a los servidores de la pestaña Servidores de nombres»; en BIND, `allow-transfer { IP; };`). Si cualquiera puede pedir un AXFR, obtiene el listado completo de equipos de la red.
 
+### Actividad en el aula 4 · Juego de rol: la transferencia de zona
+
+Vamos a «ser» servidores DNS. Sin ordenador, con tarjetas de papel.
+
+| Papel | Quién | Qué tiene / qué hace |
+|---|---|---|
+| **Primario** (`ns1`) | 1 alumno | La zona original: una tarjeta **SOA** con el serial y una tarjeta por registro |
+| **Secundarios** (`ns2`, `ns3`) | 2 alumnos | Una copia de la zona. Solo pueden cambiarla copiando la del primario |
+| **Administrador** | El profesor | Es el único que modifica la zona del primario |
+| **Reloj** | 1 alumno | Anuncia cada «ronda». Los temporizadores del SOA se cuentan en rondas |
+| **Clientes** | El resto | Preguntan a cualquier servidor por un nombre y anotan la respuesta |
+
+Temporizadores de nuestra zona: **refresh = 2 rondas · retry = 1 ronda · expire = 4 rondas**.
+
+Reglas:
+
+1. Un secundario **solo** pide la zona si el serial del primario es **mayor** que el suyo.
+2. Un secundario pregunta el SOA al primario cuando recibe un **NOTIFY** o cuando se cumple su **refresh**.
+3. Si el primario no contesta, el secundario reintenta cada **retry**. Si pasa el **expire** sin contactar, deja de responder.
+4. El primario solo entrega la zona a quien esté en su lista de **servidores autorizados**.
+
+Durante el juego, anota en tu cuaderno qué responde cada servidor en cada ronda. Al final responderemos: ¿por qué un cliente recibió una respuesta antigua? ¿Qué pasó con el registro que no llegó a los secundarios?
+
 ---
 
 ## 7. La base de datos DNS: registros de recursos
@@ -504,6 +533,52 @@ $TTL 86400
 ```
 
 > ⚠️ Fíjate en el **punto final**: `www.smr2ser.test.` es un FQDN; sin el punto, el servidor le añadiría el dominio y quedaría `www.smr2ser.test.smr2ser.test.`
+
+### Actividad en el aula 5 · Arregla el fichero de zona
+
+La empresa (ficticia) **Jamones Guijuelo** tiene la red `10.10.20.0/24` y quiere este DNS:
+
+| Equipo | IP | Funciones |
+|---|---|---|
+| `servidor` | `10.10.20.10` | DNS primario (`ns1`), correo (`correo`) e intranet (`intranet`) |
+| `copia` | `10.10.20.11` | DNS secundario (`ns2`) y servidor FTP (`ftp`) |
+| `www` | `10.10.20.30` | Web de la empresa. También debe abrirse escribiendo solo `jamones-guijuelo.test` |
+| `impresora` | `10.10.20.25` | Impresora de red |
+
+Ayer la zona tenía el serial `2026101501`. Hoy el administrador ha añadido `intranet`, `ftp` y la impresora, y ha dejado el fichero así:
+
+```text
+$TTL 86400
+@         IN  SOA    ns1.jamones-guijuelo.test  admin@jamones-guijuelo.test. (
+                     2026101501  ; serial
+                     3600        ; refresh
+                     900         ; retry
+                     604800      ; expire
+                     3600 )      ; TTL negativo
+
+@         IN  NS     ns1.jamones-guijuelo.test.
+@         IN  NS     ns2.jamones-guijuelo.test.
+@         IN  MX     10 correo.jamones-guijuelo.test.
+@         IN  CNAME  www.jamones-guijuelo.test.
+
+ns1       IN  A      10.10.20.10
+servidor  IN  A      10.10.20.10
+copia     IN  A      10.10.20.11
+www       IN  A      10.10.20.300
+impresora IN  A      10.10.20.25
+
+correo    IN  CNAME  servidor.jamones-guijuelo.test.
+intranet  IN  CNAME  10.10.20.10
+ftp       IN  CNAME  copia.jamones-guijuelo.test.
+ftp       IN  A      10.10.20.11
+25        IN  PTR    impresora.jamones-guijuelo.test.
+```
+
+1. Encuentra los **10 errores**. Para cada uno, indica la línea, qué está mal y qué regla incumple.
+2. Escribe el fichero corregido.
+3. **Ampliación:** escribe también la zona inversa `20.10.10.in-addr.arpa` con los PTR de todos los equipos.
+
+> En las prácticas comprobarás este tipo de errores con `named-checkzone`, que revisa un fichero de zona antes de cargarlo.
 
 ---
 

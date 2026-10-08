@@ -38,7 +38,7 @@ Se mantiene el escenario de la UT1. Cambia el dominio: en esta UT usamos **`smr2
 |---|---|---|
 | Red interna | `192.168.10.0/24` | `172.16.2.0/24` |
 | Servidor DNS primario | `WIN25-SER` · Windows Server 2025 · `192.168.10.100` | `ubuntuserver24` · Ubuntu Server 24.04 LTS · `172.16.2.1` |
-| Servidor DNS secundario | Segundo Windows Server · `192.168.10.200` | Segundo Ubuntu Server · IP por concretar en la práctica |
+| Servidor DNS secundario | `WIN25-SER2` · clon de WIN25-SER · `192.168.10.200` | Segundo Ubuntu Server · IP por concretar en la práctica |
 | Router | Debian 12 · `192.168.10.254` | Debian 12 · `172.16.2.254` |
 | Clientes | Windows 7 · Debian 12 (`192.168.10.150`) | Windows 7 · Debian 12 (`172.16.2.50`) |
 | Reenviadores | DNS de Educacyl: `10.151.123.21` y `10.151.126.21` | Ídem |
