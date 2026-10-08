@@ -1,0 +1,18 @@
+# Configuración de GitHub Pages del módulo Servicios en Red
+# Ruta: docs/_config.yml
+
+theme: jekyll-theme-cayman        # Tema oficial de GitHub Pages (no hace falta instalar nada)
+lang: es-ES                       # Idioma de las páginas (atributo lang del HTML)
+
+title: Servicios en Red           # Aparece en la cabecera de todas las páginas y enlaza a la portada
+description: "2º CFGM Sistemas Microinformáticos y Redes · Curso 2026/2027"   # Subtítulo de la cabecera
+
+# Botones de la cabecera. Añade una línea por cada UT cuando la publiques.
+# La url es la carpeta de la UT dentro de docs/, con barra al principio y al final.
+navegacion:
+  - titulo: Inicio
+    url: /
+  - titulo: UT1 · DHCP
+    url: /ut1-dhcp/
+  - titulo: UT2 · DNS
+    url: /ut2-dns/

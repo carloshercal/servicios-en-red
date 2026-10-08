@@ -1,0 +1,75 @@
+---
+---
+// Estilos del módulo sobre el tema Cayman. Ruta: docs/assets/css/style.scss
+// Las dos líneas de guiones de arriba son obligatorias: le dicen a Jekyll que procese este fichero.
+
+// 1. Colores del tema (Cayman los define con !default, así que basta con declararlos antes del @import)
+$header-bg-color: #0f9d8a;            // verde azulado (extremo izquierdo del degradado)
+$header-bg-color-secondary: #0b3d91;  // azul red (extremo derecho)
+$section-headings-color: #0b5f8a;     // color de los títulos ## y ###
+$body-text-color: #3d4a52;            // texto algo más oscuro que el original: se lee mejor
+$body-link-color: #1565c0;
+$code-bg-color: #f1f5f9;
+$code-text-color: #334155;
+
+@import 'jekyll-theme-cayman';
+
+// 2. Cabecera con motivo de red: nodos y enlaces en blanco semitransparente sobre el degradado
+.page-header {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120' viewBox='0 0 160 120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.14' stroke-width='1.5'%3E%3Cpath d='M20 20 L80 50 L140 15 M80 50 L60 100 L130 95 L140 15 M20 20 L60 100'/%3E%3C/g%3E%3Cg fill='%23ffffff' fill-opacity='0.22'%3E%3Ccircle cx='20' cy='20' r='4'/%3E%3Ccircle cx='80' cy='50' r='5'/%3E%3Ccircle cx='140' cy='15' r='4'/%3E%3Ccircle cx='60' cy='100' r='4'/%3E%3Ccircle cx='130' cy='95' r='5'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(120deg, $header-bg-color-secondary, $header-bg-color);
+  background-repeat: repeat, no-repeat;
+}
+
+// El título es un enlace a la portada, pero se ve como título
+.project-name a {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover { text-decoration: none; opacity: 0.9; }
+}
+
+// Botones de navegación de la cabecera
+.site-nav {
+  margin-top: 1rem;
+
+  .btn { margin: 0.25rem; }
+
+  .btn-activo {
+    background-color: rgba(255, 255, 255, 0.35);
+    border-color: rgba(255, 255, 255, 0.6);
+    font-weight: bold;
+  }
+}
+
+// 3. Contenido
+.main-content {
+  // Título principal de cada página
+  h1 {
+    color: $header-bg-color-secondary;
+    border-bottom: 2px solid $border-color;
+    padding-bottom: 0.3em;
+  }
+
+  // Tablas: la cabecera se distingue (Cayman ya las hace desplazables en el móvil)
+  table {
+    th { background-color: #eef4fb; color: $header-bg-color-secondary; }
+  }
+
+  // Avisos (líneas que empiezan por >)
+  blockquote {
+    color: $body-text-color;
+    background-color: #f5f9fc;
+    border-left: 0.3rem solid $header-bg-color;
+    padding: 0.6rem 1rem;
+    border-radius: 0 0.3rem 0.3rem 0;
+  }
+
+  // Diagramas Mermaid centrados y sin el fondo de los bloques de código
+  pre.mermaid {
+    background: transparent;
+    border: 0;
+    text-align: center;
+  }
+}
