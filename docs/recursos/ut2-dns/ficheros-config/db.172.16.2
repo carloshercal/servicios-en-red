@@ -1,0 +1,36 @@
+; =====================================================================
+;  db.172.16.2 — Fichero de la zona INVERSA 2.16.172.in-addr.arpa
+;  Módulo: Servicios en Red · 2º SMR · UT2 DNS · Práctica UT2-P2 (paso 12)
+;  Ruta en el servidor:  /etc/bind/db.172.16.2
+;  Ruta en el repo:      recursos/ut2-dns/ficheros-config/db.172.16.2
+;
+;  Aquí @ = 2.16.172.in-addr.arpa.  Un nombre sin punto final, como «50»,
+;  se completa como 50.2.16.172.in-addr.arpa. → la IP 172.16.2.50.
+;  Los nombres de destino de los PTR SIEMPRE van completos y con punto final:
+;  si no, quedarían como debiancli.2.16.172.in-addr.arpa.
+;
+;  Comprobar:  sudo named-checkzone 2.16.172.in-addr.arpa /etc/bind/db.172.16.2
+;  Aplicar:    sudo rndc reload
+; =====================================================================
+
+$TTL    86400                           ; TTL por defecto: 1 día
+
+@       IN      SOA     ns1.smr2ser.test. admin.smr2ser.test. (
+                        2026102201      ; Serial: AAAAMMDDnn
+                        3600            ; Refresh
+                        900             ; Retry
+                        604800          ; Expire
+                        3600 )          ; TTL negativo
+
+; Servidores de nombres de la zona inversa (los mismos que en la directa)
+@       IN      NS      ns1.smr2ser.test.
+@       IN      NS      ns2.smr2ser.test.
+@       IN      NS      ubuntuserver24.smr2ser.test.
+
+; ---------------------------------------------------------------------
+; Registros PTR (IP → nombre). Un PTR por IP, con el nombre principal del equipo.
+; ns1, www y mail comparten la IP .1, así que no llevan PTR propio.
+; ---------------------------------------------------------------------
+1       IN      PTR     ubuntuserver24.smr2ser.test.    ; 172.16.2.1
+50      IN      PTR     debiancli.smr2ser.test.         ; 172.16.2.50
+254     IN      PTR     router.smr2ser.test.            ; 172.16.2.254

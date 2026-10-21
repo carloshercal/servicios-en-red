@@ -1,0 +1,32 @@
+# =====================================================================
+#  Netplan — ubuntuserver24 usa su propio servidor DNS (UT2)
+#  Módulo: Servicios en Red · 2º SMR · UT2 DNS · Práctica UT2-P2 (paso 6)
+#  Ruta en el servidor:  /etc/netplan/50-cloud-init.yaml (el mismo de la UT1)
+#  Ruta en el repo:      recursos/ut2-dns/ficheros-config/netplan-servidor-ubuntu-dns.yaml
+#
+#  Cambios respecto a la UT1 (recursos/ut1-dhcp/ficheros-config/netplan-servidor-ubuntu.yaml):
+#    - nameservers: en lugar de los DNS de Educacyl, el propio servidor
+#      (172.16.2.1). Educacyl pasa a ser el REENVIADOR de BIND.
+#    - search: smr2ser.org → smr2ser.test
+#
+#  Aplicar:   sudo netplan try    ·   sudo netplan apply
+#  Comprobar: resolvectl status   (en «enp0s3»: DNS Servers 172.16.2.1, DNS Domain smr2ser.test)
+#  ¡OJO! En YAML la sangría se hace con ESPACIOS, nunca con tabuladores.
+# =====================================================================
+
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    enp0s3:                     # Interfaz conectada a net02
+      dhcp4: false              # IP fija
+      addresses:
+        - 172.16.2.1/24         # IP del servidor
+      routes:
+        - to: default
+          via: 172.16.2.254     # Router Debian, puerta de enlace de net02
+      nameservers:
+        addresses:
+          - 172.16.2.1          # NUEVO: el propio servidor, donde ahora escucha BIND
+        search:
+          - smr2ser.test        # NUEVO: dominio de búsqueda (host → host.smr2ser.test)

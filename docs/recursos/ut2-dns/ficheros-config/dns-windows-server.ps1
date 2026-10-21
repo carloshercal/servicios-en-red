@@ -10,6 +10,13 @@
 #    - Zona directa  smr2ser.test · zona inversa 10.168.192.in-addr.arpa
 #    - Reenviadores: DNS de Educacyl 10.151.123.21 y 10.151.126.21
 #
+#  USO: REFERENCIA PARA EL PROFESOR. La práctica UT2-P1 del alumnado se hace
+#  de forma GRÁFICA (docs/ut2-dns/practica-windows.md). Este script hace lo
+#  mismo desde PowerShell: sirve para preparar rápido una máquina de
+#  demostración o de corrección, o como ampliación para quien quiera más.
+#  Diferencia: aquí los PTR se crean a la vez que los A (-CreatePtr), porque la
+#  zona inversa se crea antes; en la práctica se crean después (pasos 8 y 9).
+#
 #  CÓMO USARLO: NO lo ejecutes entero de una vez. Copia y ejecuta cada bloque
 #  en PowerShell como Administrador, EN EL SERVIDOR QUE INDICA, en orden, y
 #  comprueba el resultado antes de pasar al siguiente.
@@ -18,14 +25,14 @@
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 1 · [WIN25-SER] Instalar el rol Servidor DNS (Paso 2 · RA2.d)
+# BLOQUE 1 · [WIN25-SER] Instalar el rol Servidor DNS (Paso 2 de la práctica · RA2.d)
 # ---------------------------------------------------------------------
 Install-WindowsFeature -Name DNS -IncludeManagementTools   # Rol + consola «Administrador de DNS»
 Get-Service -Name DNS                                      # Comprobación: Status = Running
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 2 · [WIN25-SER] Zonas directa e inversa (Pasos 3 y 4 · RA2.d)
+# BLOQUE 2 · [WIN25-SER] Zonas directa e inversa (Pasos 3 y 8 · RA2.d)
 # ---------------------------------------------------------------------
 Add-DnsServerPrimaryZone -Name "smr2ser.test" `
     -ZoneFile "smr2ser.test.dns" `
@@ -39,7 +46,7 @@ Get-DnsServerZone                                          # Deben aparecer smr2
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 3 · [WIN25-SER] Registros A, con PTR solo en el nombre principal de cada IP (Paso 5 · RA2.f)
+# BLOQUE 3 · [WIN25-SER] Registros A, con PTR solo en el nombre principal de cada IP (Pasos 6 y 9 · RA2.f)
 # ---------------------------------------------------------------------
 $z = "smr2ser.test"                                        # Zona en la que se crean los registros
 
@@ -55,7 +62,7 @@ Add-DnsServerResourceRecordA -ZoneName $z -Name "mail" -IPv4Address 192.168.10.1
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 4 · [WIN25-SER] Registros MX y CNAME (Paso 6 · RA2.f)
+# BLOQUE 4 · [WIN25-SER] Registros MX y CNAME (Paso 7 · RA2.f)
 # ---------------------------------------------------------------------
 Add-DnsServerResourceRecordMX -ZoneName $z -Name "." `
     -MailExchange "mail.smr2ser.test" -Preference 10       # "." = el propio dominio: correo de @smr2ser.test → mail, prioridad 10
@@ -68,7 +75,7 @@ Get-DnsServerResourceRecord -ZoneName "10.168.192.in-addr.arpa" -RRType Ptr   # 
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 5 · [WIN25-SER] SOA y NS (Paso 7 · RA2.f) → EN LA CONSOLA
+# BLOQUE 5 · [WIN25-SER] SOA y NS (Pasos 4 y 5 · RA2.f) → EN LA CONSOLA
 # ---------------------------------------------------------------------
 # Propiedades de la zona → Inicio de autoridad (SOA):
 #     Servidor principal  ns1.smr2ser.test.     Persona responsable  admin.smr2ser.test.
@@ -81,7 +88,7 @@ Get-DnsServerResourceRecord -ZoneName $z -RRType NS       # ns1.smr2ser.test. y 
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 6 · [WIN25-SER] Reenviadores y caché (Paso 8 · RA2.e)
+# BLOQUE 6 · [WIN25-SER] Reenviadores y caché (Paso 10 · RA2.e)
 # ---------------------------------------------------------------------
 Set-DnsServerForwarder -IPAddress 10.151.123.21, 10.151.126.21   # DNS de Educacyl. En casa: 8.8.8.8, 8.8.4.4
 Get-DnsServerForwarder                                     # Comprobación: las dos IP y UseRootHint = True
@@ -91,7 +98,7 @@ Show-DnsServerCache                                        # Contenido de la cac
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 7 · [WIN25-SER] El servidor y el DHCP usan nuestro DNS (Paso 9)
+# BLOQUE 7 · [WIN25-SER] El servidor y el DHCP usan nuestro DNS (Paso 11)
 # ---------------------------------------------------------------------
 Set-DnsClientServerAddress -InterfaceAlias "Ethernet" `
     -ServerAddresses 192.168.10.100, 192.168.10.200        # El servidor se pregunta a sí mismo; Educacyl ya es su reenviador
@@ -107,7 +114,7 @@ Get-DhcpServerv4OptionValue -ScopeId 192.168.10.0          # Comprobación de la
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 8 · [WIN25-SER] Guardar las zonas en disco (Paso 10)
+# BLOQUE 8 · [WIN25-SER] Guardar las zonas en disco (Paso 12)
 # ---------------------------------------------------------------------
 dnscmd /writebackfiles                                     # Escribe los ficheros .dns en disco
                                                            # (= consola: clic derecho en el servidor → «Actualizar archivos de datos del servidor»)
@@ -121,7 +128,7 @@ Get-Content "$env:SystemRoot\System32\dns\smr2ser.test.dns"   # Ver el fichero d
 # =====================================================================
 
 # ---------------------------------------------------------------------
-# BLOQUE 9 · [WIN25-SER2, con el cable desconectado] Convertir el clon (Paso 12)
+# BLOQUE 9 · [WIN25-SER2, con el cable desconectado] Convertir el clon (Paso 14)
 # ---------------------------------------------------------------------
 Uninstall-WindowsFeature -Name DHCP -IncludeManagementTools          # En net01 solo puede haber un servidor DHCP
 
@@ -141,7 +148,7 @@ Rename-Computer -NewName "WIN25-SER2" -Restart                       # Nuevo nom
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 10 · [WIN25-SER] Permitir transferencias y notificar (Paso 13 · RA2.g)
+# BLOQUE 10 · [WIN25-SER] Permitir transferencias y notificar (Paso 15 · RA2.g)
 # ---------------------------------------------------------------------
 Set-DnsServerPrimaryZone -Name "smr2ser.test" `
     -SecureSecondaries TransferToZoneNameServer `
@@ -151,7 +158,7 @@ Get-DnsServerZone -Name "smr2ser.test" |
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 11 · [WIN25-SER2] Zona secundaria (Paso 14 · RA2.g)
+# BLOQUE 11 · [WIN25-SER2] Zona secundaria (Paso 16 · RA2.g)
 # ---------------------------------------------------------------------
 Add-DnsServerSecondaryZone -Name "smr2ser.test" `
     -ZoneFile "smr2ser.test.dns" `
@@ -162,7 +169,7 @@ Get-DnsServerResourceRecord -ZoneName "smr2ser.test"       # Deben aparecer todo
 
 
 # ---------------------------------------------------------------------
-# BLOQUE 12 · [WIN25-SER y WIN25-SER2] Comprobar la transferencia (Paso 15 · RA2.g, RA2.h)
+# BLOQUE 12 · [WIN25-SER y WIN25-SER2] Comprobar la transferencia (Paso 17 · RA2.g, RA2.h)
 # ---------------------------------------------------------------------
 Resolve-DnsName smr2ser.test -Type SOA -Server 192.168.10.100 | Select-Object PrimaryServer, SerialNumber   # Serial del primario
 Resolve-DnsName smr2ser.test -Type SOA -Server 192.168.10.200 | Select-Object PrimaryServer, SerialNumber   # Serial del secundario: igual

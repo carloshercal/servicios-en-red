@@ -1,0 +1,38 @@
+// =====================================================================
+//  named.conf.local — Declaración de las zonas propias del servidor
+//  Módulo: Servicios en Red · 2º SMR · UT2 DNS · Práctica UT2-P2 (pasos 7 y 11)
+//  Ruta en el servidor:  /etc/bind/named.conf.local
+//  Ruta en el repo:      recursos/ut2-dns/ficheros-config/named.conf.local
+//
+//  Cada bloque «zone» le dice a BIND: de qué zona es responsable, de qué
+//  tipo es (primaria) y en qué fichero están sus registros.
+//
+//  Tras editar:  sudo named-checkconf
+//                sudo systemctl restart named     (o: sudo rndc reload)
+// =====================================================================
+
+//
+// Do any local configuration here
+//
+
+// ---------------------------------------------------------------------
+// Zona de búsqueda DIRECTA (nombre → IP) del dominio smr2ser.test
+// ---------------------------------------------------------------------
+zone "smr2ser.test" {
+        type primary;                           // Este servidor tiene la copia original (antes: «type master», que sigue funcionando)
+        file "/etc/bind/db.smr2ser.test";       // Fichero con los registros de la zona (ruta completa)
+};
+
+// ---------------------------------------------------------------------
+// Zona de búsqueda INVERSA (IP → nombre) de la red 172.16.2.0/24
+// El nombre es la parte de red de la IP AL REVÉS + .in-addr.arpa
+//      172.16.2  →  2.16.172.in-addr.arpa
+// ---------------------------------------------------------------------
+zone "2.16.172.in-addr.arpa" {
+        type primary;                           // Copia original de la zona inversa
+        file "/etc/bind/db.172.16.2";           // Fichero con los registros PTR
+};
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";

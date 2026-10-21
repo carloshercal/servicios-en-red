@@ -1,0 +1,57 @@
+// =====================================================================
+//  named.conf.options — Opciones generales de BIND (servidor caché y reenviador)
+//  Módulo: Servicios en Red · 2º SMR · UT2 DNS · Práctica UT2-P2 (paso 5)
+//  Ruta en el servidor:  /etc/bind/named.conf.options
+//  Ruta en el repo:      recursos/ut2-dns/ficheros-config/named.conf.options
+//
+//  Servidor: ubuntuserver24 (Ubuntu Server 24.04 LTS, BIND 9.18) · 172.16.2.1
+//  Red:      net02 · 172.16.2.0/24
+//
+//  En los ficheros de BIND los comentarios empiezan por //  y cada
+//  directiva termina en punto y coma (;), también después de cada }.
+//
+//  Tras editar:  sudo named-checkconf          (si no dice nada, está bien)
+//                sudo systemctl restart named
+// =====================================================================
+
+options {
+        // Directorio de trabajo de BIND: aquí guarda sus ficheros internos.
+        // Si una zona se declara con un nombre de fichero relativo, lo busca aquí.
+        directory "/var/cache/bind";
+
+        // Reenviadores: las consultas que este servidor no sabe responder
+        // (nombres de Internet) se las pregunta a los DNS de Educacyl.
+        // En casa: 8.8.8.8 y 8.8.4.4 (Google) o los DNS del router.
+        forwarders {
+                10.151.123.21;          // DNS primario de Educacyl
+                10.151.126.21;          // DNS secundario de Educacyl
+        };
+
+        // Solo reenviadores: si los reenviadores no responden, NO intenta
+        // preguntar a los servidores raíz (desde el aula no se llega a ellos).
+        forward only;
+
+        // Quién puede hacer consultas a este servidor: el propio servidor
+        // y los equipos de la red local net02. Nadie de fuera.
+        allow-query { localhost; 172.16.2.0/24; };
+
+        // Quién puede pedir consultas RECURSIVAS (que el servidor busque por
+        // él nombres que no son de sus zonas, p. ej. www.educa.jcyl.es).
+        // Por seguridad, solo los equipos de nuestra red.
+        allow-recursion { localhost; 172.16.2.0/24; };
+
+        // Transferencias de zona: nadie puede descargar nuestras zonas
+        // completas. (Si hubiera un secundario, se pondría aquí su IP.)
+        allow-transfer { none; };
+
+        // Validación DNSSEC desactivada. Los reenviadores de Educacyl no
+        // devuelven las firmas DNSSEC y, con la validación activada
+        // (valor por defecto: auto), las respuestas de Internet fallan con
+        // errores «no valid RRSIG» en el registro de named.
+        dnssec-validation no;
+
+        // Escuchar también por IPv6 en todas las interfaces (valor que trae
+        // Ubuntu por defecto). Por IPv4 escucha en todas sin necesidad de
+        // indicarlo.
+        listen-on-v6 { any; };
+};

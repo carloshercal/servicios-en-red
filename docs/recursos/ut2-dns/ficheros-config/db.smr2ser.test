@@ -1,0 +1,61 @@
+; =====================================================================
+;  db.smr2ser.test — Fichero de la zona DIRECTA smr2ser.test
+;  Módulo: Servicios en Red · 2º SMR · UT2 DNS · Práctica UT2-P2 (paso 8)
+;  Ruta en el servidor:  /etc/bind/db.smr2ser.test
+;  Ruta en el repo:      recursos/ut2-dns/ficheros-config/db.smr2ser.test
+;
+;  En los ficheros de zona los comentarios empiezan por punto y coma (;).
+;  Reglas que hay que recordar:
+;   - @ = el nombre de la zona (smr2ser.test.), tal como se declaró en named.conf.local.
+;   - Un nombre SIN punto final es relativo: se le añade «.smr2ser.test.»
+;     (www → www.smr2ser.test.). Un nombre CON punto final es un FQDN y se deja tal cual.
+;   - Si el primer campo de una línea se deja en blanco, se usa el nombre de la línea anterior.
+;   - Cada vez que se cambie algo, hay que SUBIR EL NÚMERO DE SERIE.
+;
+;  Comprobar:  sudo named-checkzone smr2ser.test /etc/bind/db.smr2ser.test
+;  Aplicar:    sudo rndc reload     (o: sudo systemctl restart named)
+; =====================================================================
+
+$TTL    86400                           ; TTL por defecto de los registros: 1 día (en segundos)
+
+; ---------------------------------------------------------------------
+; SOA: primer registro de la zona
+;   ns1.smr2ser.test.    → servidor primario (MNAME)
+;   admin.smr2ser.test.  → correo del responsable: admin@smr2ser.test (punto en lugar de @)
+; ---------------------------------------------------------------------
+@       IN      SOA     ns1.smr2ser.test. admin.smr2ser.test. (
+                        2026102201      ; Serial: AAAAMMDDnn → 22/10/2026, versión 01
+                        3600            ; Refresh: los secundarios comprueban cambios cada hora
+                        900             ; Retry: si fallan, reintentan cada 15 minutos
+                        604800          ; Expire: sin contactar 7 días, dejan de responder
+                        3600 )          ; TTL negativo: un «no existe» se guarda 1 hora en caché
+
+; ---------------------------------------------------------------------
+; Servidores de nombres (NS) de la zona
+; ---------------------------------------------------------------------
+@       IN      NS      ns1.smr2ser.test.               ; Servidor de nombres primario (este servidor)
+@       IN      NS      ns2.smr2ser.test.               ; Servidor de nombres secundario (reservado para una ampliación)
+@       IN      NS      ubuntuserver24.smr2ser.test.    ; Nombre real de este servidor
+
+; ---------------------------------------------------------------------
+; Servidor de correo (MX) del dominio: el correo de @smr2ser.test va a mail
+; 10 = prioridad (cuanto más bajo, más preferido)
+; ---------------------------------------------------------------------
+@       IN      MX      10 mail.smr2ser.test.
+
+; ---------------------------------------------------------------------
+; Registros A (nombre → IPv4)
+; ---------------------------------------------------------------------
+ubuntuserver24  IN      A       172.16.2.1      ; Este servidor (DHCP + DNS)
+ns1             IN      A       172.16.2.1      ; Servidor de nombres primario
+ns2             IN      A       172.16.2.2      ; Servidor de nombres secundario (aún no existe)
+router          IN      A       172.16.2.254    ; Router Debian 12, puerta de enlace de net02
+debiancli       IN      A       172.16.2.50     ; Cliente Debian 12 (reserva DHCP)
+www             IN      A       172.16.2.1      ; Servidor web (UT6)
+mail            IN      A       172.16.2.1      ; Servidor de correo (UT5). Es un A porque lo usa el MX
+
+; ---------------------------------------------------------------------
+; Alias (CNAME): un nombre que apunta a otro nombre
+; ---------------------------------------------------------------------
+web             IN      CNAME   www             ; web.smr2ser.test → www.smr2ser.test
+ftp             IN      CNAME   ubuntuserver24  ; ftp.smr2ser.test → ubuntuserver24.smr2ser.test (UT4)
