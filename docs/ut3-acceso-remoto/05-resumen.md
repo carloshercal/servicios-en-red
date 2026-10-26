@@ -34,7 +34,7 @@ title: "UT3 · 5. Resumen y repaso"
 | Clientes en otros SO | Todos | Todos (PuTTY en Windows antiguos) | Linux (Remmina, FreeRDP), macOS, móviles | Todos | Todos |
 | Sesión | Nueva | Nueva | Nueva (se puede desconectar y reanudar) | Compartida o virtual | Compartida o virtual |
 | Uso típico hoy | Diagnóstico de puertos, equipos de red antiguos | **Administrar servidores Linux** y equipos de red | **Escritorios y servidores Windows** | Asistencia, entornos mixtos | Escritorios Linux remotos |
-| En esta UT | [Página 2](02-telnet.md) | [Página 3](03-ssh.md) | [Página 4](04-escritorio-remoto.md) | [Página 4](04-escritorio-remoto.md#4-vnc-virtual-network-computing) | [Página 4](04-escritorio-remoto.md#5-nx-nomachine-y-x2go) |
+| En esta UT | [Página 2](02-telnet.md) | [Página 3](03-ssh.md) | [Página 4](04-escritorio-remoto.md) | [Página 4](04-escritorio-remoto.md#4-vnc-virtual-network-computing) · PR0301-B | [Página 4](04-escritorio-remoto.md#5-nx-nomachine-y-x2go) · PR0301-C |
 
 ### Resumen de ventajas y deficiencias
 
@@ -88,8 +88,10 @@ Para **administrar** (RA6.g) no siempre hace falta un escritorio:
 
 | Origen ↓ · Destino → | **Ubuntu Server** (`ubuntuserver24`) | **Windows Server** (`WIN25-SER`) |
 |---|---|---|
-| **Debian** (`debiancli`) | **CLI:** `telnet`, `ssh` (ej. 3, 9) · **GUI:** `ssh -X` (ej. 14), Remmina → xrdp (ej. 22) · **Admin:** `ssh` + `systemctl` (ej. 9) | **CLI:** `ssh` al OpenSSH de Windows (ej. 16) · **GUI:** Remmina / `xfreerdp` (ej. 19) · **Admin:** `ssh` + PowerShell (ej. 16), consola DNS por RDP (ej. 19) |
-| **Windows 7** | **CLI:** Cliente Telnet (ej. 4), PuTTY (ej. 15) · **GUI:** `mstsc` → xrdp (ej. 21) · **Admin:** PuTTY + `sudo` (ej. 15) | **GUI:** `mstsc` (ej. 18) |
+| **Debian** (`debiancli`) | **CLI:** `telnet`, `ssh` (ej. 3, 9) · **GUI:** `ssh -X` (ej. 14), Remmina → xrdp (ampliación) · **Admin:** `ssh` + `systemctl` (ej. 9) | **CLI:** `ssh` al OpenSSH de Windows (ej. 16) · **GUI:** Remmina / `xfreerdp` por RDP (ej. 19), Remmina por **VNC** (PR0301-B) · **Admin:** `ssh` + PowerShell (ej. 16), consola DNS por RDP (ej. 19) |
+| **Windows 7** | **CLI:** Cliente Telnet (ej. 4), PuTTY (ej. 15) · **GUI:** `mstsc` → xrdp (ampliación) · **Admin:** PuTTY + `sudo` (ej. 15) | **GUI:** `mstsc` (ej. 18) |
+
+Además, en la **PR0301-C** te conectas desde **Windows 7** al escritorio de **`debiancli`** con NoMachine (protocolo NX, puerto 4000).
 
 ```mermaid
 flowchart LR
@@ -97,10 +99,11 @@ flowchart LR
     W7["Windows 7"]
     UBU["ubuntuserver24<br/>Ubuntu Server 24.04"]
     WIN["WIN25-SER<br/>Windows Server 2025"]
-    DEB -- "Telnet 23 · SSH 22 · RDP 3389 (xrdp)" --> UBU
-    DEB -- "SSH 22 · RDP 3389" --> WIN
-    W7 -- "Telnet 23 · SSH 22 (PuTTY) · RDP 3389 (xrdp)" --> UBU
+    DEB -- "Telnet 23 · SSH 22" --> UBU
+    DEB -- "SSH 22 · RDP 3389 · VNC 5900" --> WIN
+    W7 -- "Telnet 23 · SSH 22 (PuTTY)" --> UBU
     W7 -- "RDP 3389" --> WIN
+    W7 -- "NX 4000 (NoMachine)" --> DEB
 ```
 
 > En la empresa, lo más habitual es **SSH para Linux y RDP para Windows**. Pero, como has comprobado, los protocolos son estándares independientes del sistema operativo: cualquier cliente puede hablar con cualquier servidor del mismo protocolo.
@@ -188,7 +191,7 @@ flowchart LR
 12. ¿Qué diferencia hay entre SFTP y FTP?
 13. Escribe el comando para ver `xclock`, ejecutado en `ubuntuserver24`, en el escritorio de `debiancli`. ¿Qué paquete es imprescindible en el servidor? ¿Qué debe mostrar `echo $DISPLAY`?
 14. ¿Qué es **NLA** en RDP y qué ventaja aporta? ¿Por qué aparece un aviso de certificado al conectar con `WIN25-SER`? *(RA6.c, RA6.d)*
-15. Explica qué hacen `xrdp`, `xrdp-sesman` y el fichero `~/.xsession` cuando un cliente se conecta a `ubuntuserver24`. *(RA6.c)*
+15. ¿Qué diferencia observaste entre conectarte a `WIN25-SER` por RDP (ejercicio 18) y por VNC (PR0301-B)? ¿Cuál comparte la pantalla de la consola? *(RA6.c, RA6.e)*
 16. Indica dos formas de conectarse por RDP desde Debian a Windows Server y una de conectarse desde Windows a Ubuntu Server en modo gráfico. *(RA6.f)*
 17. ¿En qué puerto escucha la pantalla `:2` de un servidor VNC? ¿Por qué se recomienda usar VNC a través de un túnel SSH? Escribe el comando del túnel.
 18. ¿En qué se diferencian NoMachine (versión actual) y X2Go en licencia, protocolo y puerto?

@@ -14,9 +14,9 @@ flowchart TB
     R["Router · Debian 12<br/>enp0s3: NAT · enp0s8: 192.168.10.254 · enp0s9: 172.16.2.254<br/>ip_forward = 1"]
     SW1{{"net01 · 192.168.10.0/24"}}
     SW2{{"net02 · 172.16.2.0/24"}}
-    W["WIN25-SER · Windows Server 2025<br/>192.168.10.100<br/>RDP 3389/TCP+UDP · OpenSSH 22/TCP"]
-    U["ubuntuserver24 · Ubuntu Server 24.04 LTS<br/>172.16.2.1<br/>Telnet 23 (inetd) · SSH 22 (ssh.socket) · xrdp 3389"]
-    D["debiancli · Debian 12 con escritorio<br/>172.16.2.50 (reserva DHCP)"]
+    W["WIN25-SER · Windows Server 2025<br/>192.168.10.100<br/>RDP 3389/TCP+UDP · OpenSSH 22/TCP · VNC 5900/TCP"]
+    U["ubuntuserver24 · Ubuntu Server 24.04 LTS<br/>172.16.2.1<br/>Telnet 23 (inetd) · SSH 22 (ssh.socket) · xrdp 3389 (ampliación)"]
+    D["debiancli · Debian 12 con escritorio<br/>172.16.2.50 (reserva DHCP)<br/>NoMachine 4000/TCP"]
     C7["Cliente Windows 7<br/>DHCP .101 – .200"]
 
     INET --- R
@@ -64,8 +64,10 @@ flowchart TB
 | `debiancli` → `WIN25-SER` | SSH (22) | `ssh` | 03 | RA6.f, RA6.g |
 | Windows 7 → `WIN25-SER` | RDP (3389) | `mstsc` | 04 | RA6.c, RA6.d |
 | `debiancli` → `WIN25-SER` | RDP (3389) | Remmina | 04 | RA6.f |
-| Windows 7 → `ubuntuserver24` | RDP (3389) → xrdp | `mstsc` | 04 | RA6.c, RA6.f |
-| `debiancli` → `ubuntuserver24` | RDP (3389) → xrdp | Remmina | 04 | RA6.f |
+| `debiancli` → `WIN25-SER` | VNC (5900) | Remmina | PR0301-B | RA6.c, RA6.f |
+| Windows 7 → `debiancli` | NX (4000) | NoMachine | PR0301-C | RA6.c, RA6.f |
+| Windows 7 → `ubuntuserver24` | RDP (3389) → xrdp | `mstsc` | 04 (ampliación) | RA6.f |
+| `debiancli` → `ubuntuserver24` | RDP (3389) → xrdp | Remmina | 04 (ampliación) | RA6.f |
 
 ---
 
@@ -81,4 +83,4 @@ flowchart TB
 
 > **No** poner ningún servidor en «Adaptador puente».
 > `WIN25-SER2` (clon de la UT2) no se usa en esta unidad: apágalo.
-> Antes de la unidad, haz una **instantánea** de `ubuntuserver24` y `WIN25-SER` («antes-UT3»). La instalación de XFCE ocupa varios cientos de MB: comprueba que `ubuntuserver24` tiene al menos 3 GB libres (`df -h /`).
+> Antes de la unidad, haz una **instantánea** de `ubuntuserver24`, `WIN25-SER` y `debiancli` («antes-UT3»). Si se hace la ampliación de xrdp, la instalación de XFCE ocupa varios cientos de MB: comprueba que `ubuntuserver24` tiene al menos 3 GB libres (`df -h /`).

@@ -17,7 +17,7 @@ title: "UT3 · 4. Escritorio remoto: RDP, VNC y NX"
 6. [Ejercicios](#6-ejercicios)
 7. [Verificación](#7-verificación)
 8. [Errores frecuentes](#8-errores-frecuentes)
-9. [Entregable para Teams](#9-entregable-para-teams)
+9. [Comprueba antes de seguir](#9-comprueba-antes-de-seguir)
 10. [Ampliación opcional](#10-ampliación-opcional)
 
 ---
@@ -125,7 +125,7 @@ flowchart LR
 
 > Ubuntu **Desktop** 24.04 trae además su propio servidor RDP (*Configuración → Sistema → Escritorio remoto*). En Ubuntu **Server** se usa xrdp.
 
-> ℹ️ En la UT1 y la UT2 trabajamos el servidor solo por terminal. Aquí instalamos un escritorio **porque lo exige el criterio RA6.c**. En un servidor real se evita: consume recursos y amplía lo que hay que mantener actualizado.
+> ℹ️ xrdp se practica en la [ampliación](#10-ampliación-opcional) de esta página: hay que instalar un escritorio en el servidor, algo que en un servidor real se evita porque consume recursos y amplía lo que hay que mantener actualizado. El acceso gráfico a Linux se trabaja en la práctica PR0301 con NoMachine.
 
 ---
 
@@ -163,6 +163,8 @@ sequenceDiagram
 | **Sesión virtual** | Un escritorio **nuevo e independiente**, sin monitor. Útil en **servidores** | TigerVNC (`tigervnc-standalone-server`) en Linux |
 
 **Visores:** TigerVNC Viewer, TightVNC Viewer, RealVNC Viewer, Remmina (plugin VNC).
+
+> 🛠️ VNC se practica en la **Parte B de la PR0301** (Teams): instalarás un servidor VNC en `WIN25-SER` y te conectarás desde `debiancli` con Remmina. Los pasos los investigas tú.
 
 ### Seguridad de VNC
 
@@ -221,6 +223,8 @@ flowchart LR
     end
 ```
 
+> 🛠️ NoMachine se practica en la **Parte C de la PR0301** (Teams): servidor en `debiancli` y cliente en Windows 7.
+
 | ✅ Ventajas de NX/X2Go | ❌ Deficiencias |
 |---|---|
 | Muy eficiente en redes lentas | NoMachine es propietario; la versión gratuita es solo para uso personal |
@@ -232,8 +236,8 @@ flowchart LR
 
 ## 6. Ejercicios
 
-> **Requisitos previos:** páginas [1](01-conceptos.md) a [3](03-ssh.md) terminadas. Instantánea reciente de `WIN25-SER` y de `ubuntuserver24`.
-> Usuarios de laboratorio (contraseñas **ficticias**): `tecnico` / `Tecnico.UT3!` en `WIN25-SER` y `alumno` / `Alumno.UT3!` en `ubuntuserver24`.
+> **Requisitos previos:** páginas [1](01-conceptos.md) a [3](03-ssh.md) terminadas. Instantánea reciente de `WIN25-SER`.
+> Usuario de laboratorio (contraseña **ficticia**): `tecnico` / `Tecnico.UT3!` en `WIN25-SER`.
 
 ### Ejercicio 17 · Activar Escritorio remoto en `WIN25-SER` (RA6.c)
 
@@ -321,7 +325,80 @@ xfreerdp /v:192.168.10.100 /u:tecnico /d:WIN25-SER
 
 > La primera vez, `xfreerdp` muestra los datos del certificado en el terminal y pregunta si confías en él.
 
-### Ejercicio 20 · Instalar xrdp y XFCE en `ubuntuserver24` (RA6.c)
+### Ejercicio 20 · RDP en Wireshark (RA6.e)
+
+En `debiancli`, captura mientras te conectas por Remmina a `192.168.10.100`. Filtro: `tcp.port == 3389`.
+
+1. Localiza el *Client Hello* y el *Server Hello* de **TLS** y el **certificado** que envía el servidor. ¿Qué nombre aparece?
+2. Los paquetes siguientes se muestran como *Application Data*: ¿puedes leer algo de lo que escribes en la sesión?
+3. Compara con la captura de Telnet: ¿qué protocolo de los vistos hasta ahora se parece más a RDP en seguridad?
+
+---
+
+## 7. Verificación
+
+| Comprobación | Dónde | Comando | Qué debe verse |
+|---|---|---|---|
+| Servicio RDP | WIN25-SER | `Get-Service TermService` | `Running` |
+| Puerto RDP | WIN25-SER | `netstat -ano \| findstr :3389` | TCP y UDP `0.0.0.0:3389` |
+| Conexiones permitidas | WIN25-SER | `Get-ItemProperty 'HKLM:\System\CurrentControlSet\Control\Terminal Server' fDenyTSConnections` | `0` |
+| NLA | WIN25-SER | `Get-ItemProperty 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' UserAuthentication` | `1` |
+| Sesiones | WIN25-SER | `quser` | Usuarios, sesión `rdp-tcp#N`, estado Activo/Desc. |
+| Registro | WIN25-SER | *Visor de eventos → Registros de Windows → Seguridad*, evento **4624** con tipo de inicio de sesión **10** | Inicio de sesión remoto interactivo |
+| Servicio xrdp (ampliación) | ubuntuserver24 | `systemctl status xrdp xrdp-sesman` | `active (running)` |
+| Puerto xrdp (ampliación) | ubuntuserver24 | `sudo ss -tlnp \| grep 3389` | `LISTEN … :3389 … "xrdp"` |
+| Registro xrdp (ampliación) | ubuntuserver24 | `sudo journalctl -u xrdp-sesman -n 20` | Inicio de sesión de `alumno` |
+| Puerto accesible | Cliente | `nc -zv 172.16.2.1 3389` · `Test-NetConnection` | `succeeded` / `Connected` |
+
+---
+
+## 8. Errores frecuentes
+
+| Error | Síntoma | Solución |
+|---|---|---|
+| Usuario sin permiso de Escritorio remoto | *Para iniciar sesión de forma remota, necesita el derecho…* | Añadirlo a **Usuarios de escritorio remoto** (o ser administrador) |
+| Windows 7 se conecta con el usuario de su propio equipo | Credenciales incorrectas aunque la contraseña esté bien | Escribir el usuario como `WIN25-SER\tecnico` |
+| Error de **corrección de cifrado de CredSSP** en Windows 7 | No conecta con NLA | Actualizar Windows 7 (cliente RDP y CredSSP). En el laboratorio, como último recurso, el profesor puede desactivar NLA solo en `WIN25-SER`; **nunca** en producción |
+| RDP activado pero no responde desde `net02` | `telnet … 3389` se queda esperando | Regla del cortafuegos no activada para el perfil de red; `Enable-NetFirewallRule -Group "@FirewallAPI.dll,-28752"` |
+| Tercera sesión de administración | Windows pide expulsar a otro usuario | Límite de 2 sesiones sin rol RDS |
+| Cerrar la ventana en vez de cerrar sesión | La sesión sigue abierta (estado Desconectado) | *Inicio → Cerrar sesión* dentro de la sesión remota |
+| xrdp: pantalla negra o se cierra al entrar | Falta `~/.xsession` o no hay escritorio instalado | `echo "xfce4-session" > ~/.xsession` en el usuario que se conecta |
+| xrdp: falla si el usuario ya tiene sesión gráfica local | Sesión que se cierra o queda en negro | Cerrar la sesión local de ese usuario o usar otro usuario |
+| xrdp no arranca o el cliente corta al negociar TLS | `journalctl -u xrdp` muestra errores con la clave | `sudo adduser xrdp ssl-cert` y reiniciar xrdp |
+| VNC: conectar al puerto equivocado | `Connection refused` | Pantalla `:1` → puerto **5901**, no 5900 |
+| VNC directo por la red | Contraseña y pantalla capturables | Servidor solo en `localhost` + túnel `ssh -L` |
+| Servidor en adaptador puente | El escritorio remoto queda visible en la red del aula | Solo redes internas |
+
+---
+
+## 9. Comprueba antes de seguir
+
+- ☐ Escritorio remoto está activado en `WIN25-SER`, con NLA, y `tecnico` es miembro de **Usuarios de escritorio remoto** (ejercicio 17).
+- ☐ `telnet 192.168.10.100 3389` desde `debiancli` ahora dice `Connected` (ejercicio 17).
+- ☐ Te has conectado desde Windows 7 con `mstsc` y desde `debiancli` con Remmina, comprobando antes el certificado (ejercicios 18 y 19).
+- ☐ Con `quser` distingues una sesión **Activa** de una **Desconectada** (ejercicio 18).
+- ☐ Has localizado en Wireshark el certificado del servidor en el *Server Hello* (ejercicio 20).
+
+**Siguiente paso:** las **Partes B (VNC) y C (NoMachine)** de la práctica **PR0301**, en Teams.
+
+**Para comentar en clase:**
+
+1. ¿Qué es NLA y qué ataque o problema evita?
+2. ¿Por qué aparece un aviso de certificado al conectar a `WIN25-SER`? ¿Qué debes comprobar antes de aceptarlo?
+3. ¿Qué diferencia hay entre **desconectar** y **cerrar sesión** en RDP? ¿Qué problema puede causar desconectar en un servidor con el límite de 2 sesiones?
+4. xrdp, ¿es un servidor gráfico? Explica el papel de `xrdp`, `xrdp-sesman` y `~/.xsession`.
+5. ¿Qué ventaja tiene VNC frente a RDP para dar soporte a un usuario? ¿Y qué deficiencia grave tiene?
+6. Para administrar `ubuntuserver24`, ¿usarías SSH o un escritorio remoto? Justifica con dos criterios (ancho de banda, seguridad, recursos, automatización).
+
+---
+
+## 10. Ampliación opcional
+
+### RDP hacia Linux con xrdp
+
+> Usuario de laboratorio: `alumno` / `Alumno.UT3!` (ficticia) en `ubuntuserver24`.
+
+### Ampliación A · Instalar xrdp y XFCE en `ubuntuserver24`
 
 > 📸 Haz una **instantánea** de `ubuntuserver24` antes de empezar: se instalan varios cientos de MB. Comprueba que hay al menos 3 GB libres con `df -h /`.
 
@@ -357,7 +434,7 @@ xfreerdp /v:192.168.10.100 /u:tecnico /d:WIN25-SER
 
    **Resultado esperado:** `xrdp` y `xrdp-sesman` en `active (running)` y una línea `LISTEN … *:3389` (o `[::]:3389`) del proceso `xrdp`.
 
-### Ejercicio 21 · De Windows 7 a Ubuntu Server por RDP (RA6.f)
+### Ampliación B · De Windows 7 a Ubuntu Server por RDP
 
 1. En Windows 7, abre `mstsc`. *Equipo:* `172.16.2.1`. **Conectar**.
 2. Acepta el aviso del certificado (es el certificado genérico del sistema Ubuntu, `ssl-cert-snakeoil`).
@@ -373,7 +450,7 @@ xfreerdp /v:192.168.10.100 /u:tecnico /d:WIN25-SER
 
 > El cliente de **Windows** te ha dado el escritorio de un servidor **Linux**: RDP es un protocolo, no un producto exclusivo de Windows.
 
-### Ejercicio 22 · De Debian a Ubuntu Server con Remmina (RA6.f)
+### Ampliación C · De Debian a Ubuntu Server con Remmina
 
 1. En Remmina, nueva conexión **RDP** a `172.16.2.1`, usuario `alumno`.
 2. Abre un terminal en XFCE y comprueba desde qué IP estás conectado. En una sesión **SSH** paralela a `ubuntuserver24`:
@@ -384,80 +461,9 @@ xfreerdp /v:192.168.10.100 /u:tecnico /d:WIN25-SER
 
    **Resultado esperado:** una conexión desde `172.16.2.50`.
 
-### Ejercicio 23 · RDP en Wireshark (RA6.e)
+### Otras ampliaciones
 
-En `debiancli`, captura mientras te conectas por Remmina a `192.168.10.100`. Filtro: `tcp.port == 3389`.
-
-1. Localiza el *Client Hello* y el *Server Hello* de **TLS** y el **certificado** que envía el servidor. ¿Qué nombre aparece?
-2. Los paquetes siguientes se muestran como *Application Data*: ¿puedes leer algo de lo que escribes en la sesión?
-3. Compara con la captura de Telnet: ¿qué protocolo de los vistos hasta ahora se parece más a RDP en seguridad?
-
----
-
-## 7. Verificación
-
-| Comprobación | Dónde | Comando | Qué debe verse |
-|---|---|---|---|
-| Servicio RDP | WIN25-SER | `Get-Service TermService` | `Running` |
-| Puerto RDP | WIN25-SER | `netstat -ano \| findstr :3389` | TCP y UDP `0.0.0.0:3389` |
-| Conexiones permitidas | WIN25-SER | `Get-ItemProperty 'HKLM:\System\CurrentControlSet\Control\Terminal Server' fDenyTSConnections` | `0` |
-| NLA | WIN25-SER | `Get-ItemProperty 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' UserAuthentication` | `1` |
-| Sesiones | WIN25-SER | `quser` | Usuarios, sesión `rdp-tcp#N`, estado Activo/Desc. |
-| Registro | WIN25-SER | *Visor de eventos → Registros de Windows → Seguridad*, evento **4624** con tipo de inicio de sesión **10** | Inicio de sesión remoto interactivo |
-| Servicio xrdp | ubuntuserver24 | `systemctl status xrdp xrdp-sesman` | `active (running)` |
-| Puerto xrdp | ubuntuserver24 | `sudo ss -tlnp \| grep 3389` | `LISTEN … :3389 … "xrdp"` |
-| Registro xrdp | ubuntuserver24 | `sudo journalctl -u xrdp-sesman -n 20` | Inicio de sesión de `alumno` |
-| Puerto accesible | Cliente | `nc -zv 172.16.2.1 3389` · `Test-NetConnection` | `succeeded` / `Connected` |
-
----
-
-## 8. Errores frecuentes
-
-| Error | Síntoma | Solución |
-|---|---|---|
-| Usuario sin permiso de Escritorio remoto | *Para iniciar sesión de forma remota, necesita el derecho…* | Añadirlo a **Usuarios de escritorio remoto** (o ser administrador) |
-| Windows 7 se conecta con el usuario de su propio equipo | Credenciales incorrectas aunque la contraseña esté bien | Escribir el usuario como `WIN25-SER\tecnico` |
-| Error de **corrección de cifrado de CredSSP** en Windows 7 | No conecta con NLA | Actualizar Windows 7 (cliente RDP y CredSSP). En el laboratorio, como último recurso, el profesor puede desactivar NLA solo en `WIN25-SER`; **nunca** en producción |
-| RDP activado pero no responde desde `net02` | `telnet … 3389` se queda esperando | Regla del cortafuegos no activada para el perfil de red; `Enable-NetFirewallRule -Group "@FirewallAPI.dll,-28752"` |
-| Tercera sesión de administración | Windows pide expulsar a otro usuario | Límite de 2 sesiones sin rol RDS |
-| Cerrar la ventana en vez de cerrar sesión | La sesión sigue abierta (estado Desconectado) | *Inicio → Cerrar sesión* dentro de la sesión remota |
-| xrdp: pantalla negra o se cierra al entrar | Falta `~/.xsession` o no hay escritorio instalado | `echo "xfce4-session" > ~/.xsession` en el usuario que se conecta |
-| xrdp: falla si el usuario ya tiene sesión gráfica local | Sesión que se cierra o queda en negro | Cerrar la sesión local de ese usuario o usar otro usuario |
-| xrdp no arranca o el cliente corta al negociar TLS | `journalctl -u xrdp` muestra errores con la clave | `sudo adduser xrdp ssl-cert` y reiniciar xrdp |
-| VNC: conectar al puerto equivocado | `Connection refused` | Pantalla `:1` → puerto **5901**, no 5900 |
-| VNC directo por la red | Contraseña y pantalla capturables | Servidor solo en `localhost` + túnel `ssh -L` |
-| Servidor en adaptador puente | El escritorio remoto queda visible en la red del aula | Solo redes internas |
-
----
-
-## 9. Entregable para Teams
-
-Capturas de pantalla de:
-
-1. *Propiedades del sistema → Remoto* de `WIN25-SER` con las conexiones permitidas, NLA marcada y `tecnico` en la lista de usuarios. O la salida de PowerShell equivalente.
-2. `netstat -ano | findstr :3389` en `WIN25-SER` y `telnet 192.168.10.100 3389` conectado desde `debiancli`.
-3. El aviso de certificado de `mstsc` en Windows 7 con el certificado abierto (emitido a `WIN25-SER`).
-4. Sesión RDP de `tecnico` desde Windows 7 con la unidad del cliente visible en el Explorador.
-5. `quser` en `WIN25-SER` con las dos sesiones (Windows 7 y Remmina).
-6. Remmina en `debiancli` mostrando la consola DNS de `WIN25-SER`.
-7. `systemctl status xrdp xrdp-sesman` y `ss -tlnp | grep 3389` en `ubuntuserver24`.
-8. Escritorio XFCE de `ubuntuserver24` dentro de `mstsc` en Windows 7, con un terminal que muestre `hostname`.
-9. Wireshark con el certificado del servidor en el *Server Hello* de una sesión RDP.
-
-**Preguntas de reflexión:**
-
-1. ¿Qué es NLA y qué ataque o problema evita?
-2. ¿Por qué aparece un aviso de certificado al conectar a `WIN25-SER`? ¿Qué debes comprobar antes de aceptarlo?
-3. ¿Qué diferencia hay entre **desconectar** y **cerrar sesión** en RDP? ¿Qué problema puede causar desconectar en un servidor con el límite de 2 sesiones?
-4. xrdp, ¿es un servidor gráfico? Explica el papel de `xrdp`, `xrdp-sesman` y `~/.xsession`.
-5. ¿Qué ventaja tiene VNC frente a RDP para dar soporte a un usuario? ¿Y qué deficiencia grave tiene?
-6. Para administrar `ubuntuserver24`, ¿usarías SSH o xrdp? Justifica con dos criterios (ancho de banda, seguridad, recursos, automatización).
-
----
-
-## 10. Ampliación opcional
-
-- **RDP dentro de un túnel SSH.** Desde `debiancli`:
+- **RDP dentro de un túnel SSH** (requiere la ampliación A). Desde `debiancli`:
 
   ```bash
   ssh -L 33389:localhost:3389 alumno@172.16.2.1

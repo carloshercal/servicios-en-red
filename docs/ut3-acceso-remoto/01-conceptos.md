@@ -16,7 +16,7 @@ title: "UT3 · 1. Conceptos y funcionamiento general del acceso remoto"
 5. [Fases de una sesión remota](#5-fases-de-una-sesión-remota)
 6. [Ejercicio 1 · Preparar el escenario](#6-ejercicio-1--preparar-el-escenario)
 7. [Errores frecuentes](#7-errores-frecuentes)
-8. [Entregable para Teams](#8-entregable-para-teams)
+8. [Comprueba antes de seguir](#8-comprueba-antes-de-seguir)
 
 ---
 
@@ -253,16 +253,15 @@ tracert 192.168.10.100
 
 ---
 
-## 8. Entregable para Teams
+## 8. Comprueba antes de seguir
 
-Captura de pantalla de:
+Antes de pasar a la página 2, comprueba que:
 
-1. La configuración de los tres adaptadores del router en VirtualBox.
-2. En el router: `ip -br a` y `sysctl net.ipv4.ip_forward`.
-3. En `debiancli`: `traceroute 192.168.10.100` (se ve el router como primer salto).
-4. En Windows 7: `ipconfig` y `ping 192.168.10.100`.
+- ☐ El router tiene IP en `net01` y en `net02`, y `sysctl net.ipv4.ip_forward` vale `1`.
+- ☐ `traceroute 192.168.10.100` desde `debiancli` pasa por el router (`172.16.2.254`).
+- ☐ Windows 7 tiene IP de `net02` y responde el `ping` a `172.16.2.1` y a `192.168.10.100`.
 
-**Preguntas de reflexión:**
+**Para comentar en clase:**
 
 1. ¿Qué cuatro datos identifican la conexión que abrirás desde `debiancli` al puerto 22 de `ubuntuserver24`? ¿Cuál de ellos no conoces de antemano?
 2. Pon un ejemplo de **acceso remoto** y otro de **administración remota** con las máquinas del escenario.

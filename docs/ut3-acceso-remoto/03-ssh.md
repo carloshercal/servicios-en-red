@@ -21,7 +21,7 @@ title: "UT3 · 3. SSH"
 10. [Ejercicios](#10-ejercicios)
 11. [Verificación](#11-verificación)
 12. [Errores frecuentes](#12-errores-frecuentes)
-13. [Entregable para Teams](#13-entregable-para-teams)
+13. [Comprueba antes de seguir](#13-comprueba-antes-de-seguir)
 14. [Ampliación opcional](#14-ampliación-opcional)
 
 ---
@@ -640,21 +640,22 @@ Desde **`debiancli`**:
 
 ---
 
-## 13. Entregable para Teams
+## 13. Comprueba antes de seguir
 
-Capturas de pantalla de:
+Los puntos marcados con 📎 **PR0301** son evidencias de la **Parte A de la práctica PR0301** (Teams): guarda esas capturas.
 
-1. `systemctl status ssh.socket ssh` y `sudo ss -tlnp | grep :22` en `ubuntuserver24`.
-2. La huella del servidor (ejercicio 8) junto a la pregunta del cliente en la primera conexión.
-3. El comando suelto con `sudo systemctl restart named` ejecutado desde `debiancli` (ejercicio 9).
-4. Wireshark con una sesión SSH: mensajes *Key Exchange Init* y *New Keys* y el flujo TCP ilegible.
-5. `ls -l ~/.ssh` en el cliente, `authorized_keys` en el servidor y `ssh -v` con `using "publickey"`.
-6. `sudo sshd -T` filtrado (ejercicio 13) y el intento de `root` rechazado con el banner visible.
-7. `xeyes` o `xclock` en el escritorio de `debiancli` con `echo $DISPLAY` en el terminal.
-8. PuTTY en Windows 7 con `who` y `systemctl status isc-dhcp-server named`.
-9. Sesión SSH de `debiancli` a `WIN25-SER` con `Get-DhcpServerv4Scope` y `Get-DnsServerZone`.
+- ☐ `ssh.socket` está en escucha y sabes por qué `ssh.service` puede aparecer inactivo (ejercicio 8).
+- ☐ Has comparado la huella del servidor antes de aceptarla (ejercicio 9).
+- ☐ Has reiniciado `named` con un comando suelto: `ssh -t … 'sudo systemctl restart named'` (ejercicio 9).
+- ☐ 📎 **PR0301** Wireshark: **Seguir flujo TCP** de una sesión SSH en la que no se lee nada (ejercicio 10).
+- ☐ Has copiado ficheros con `scp` y `sftp` (ejercicio 11).
+- ☐ 📎 **PR0301** `ssh -v` con `using "publickey"` y el `authorized_keys` del servidor (ejercicio 12).
+- ☐ 📎 **PR0301** El fichero `10-ut3-seguridad.conf` y el intento de `root` rechazado con el banner visible (ejercicio 13).
+- ☐ `xeyes` o `xclock` aparecen en el escritorio de `debiancli` y `echo $DISPLAY` muestra `localhost:10.0` (ejercicio 14).
+- ☐ 📎 **PR0301** PuTTY en Windows 7 con `who` y `systemctl status isc-dhcp-server named` (ejercicio 15).
+- ☐ 📎 **PR0301** SSH de `debiancli` a `WIN25-SER` con `hostname`, `Get-DhcpServerv4Scope` y `Get-DnsServerZone` (ejercicio 16).
 
-**Preguntas de reflexión:**
+**Para comentar en clase:**
 
 1. ¿Por qué no se puede capturar la contraseña de una sesión SSH, aunque se use autenticación por contraseña?
 2. ¿Qué protege la huella del servidor? ¿Qué harías si un día aparece `REMOTE HOST IDENTIFICATION HAS CHANGED`?

@@ -16,7 +16,7 @@ title: "UT3 · 2. Telnet"
 5. [Ejercicios](#5-ejercicios)
 6. [Verificación](#6-verificación)
 7. [Errores frecuentes](#7-errores-frecuentes)
-8. [Entregable para Teams](#8-entregable-para-teams)
+8. [Comprueba antes de seguir](#8-comprueba-antes-de-seguir)
 9. [Ampliación opcional](#9-ampliación-opcional)
 
 ---
@@ -320,18 +320,17 @@ sudo ss -tlnp | grep :23         # ya no debe aparecer nada
 
 ---
 
-## 8. Entregable para Teams
+## 8. Comprueba antes de seguir
 
-Capturas de pantalla de:
+Los puntos marcados con 📎 **PR0301** son evidencias de la **Parte A de la práctica PR0301** (Teams): guarda esas capturas.
 
-1. `systemctl status inetd` en `active (running)` y `sudo ss -tlnp | grep :23`.
-2. Sesión Telnet desde `debiancli` con `whoami`, `hostname` y `who`.
-3. Sesión Telnet desde Windows 7 con `who` (se ve la IP del cliente Windows).
-4. Los tres resultados del ejercicio 5 (conectado, rechazado, tiempo agotado).
-5. Wireshark: **Seguir flujo TCP** con el usuario y la contraseña visibles. **Usa la contraseña ficticia del laboratorio.**
-6. `ss -tlnp | grep :23` vacío tras desactivar Telnet.
+- ☐ `inetd` está `active (running)` y `ss` muestra el puerto 23 en escucha.
+- ☐ Te has conectado por Telnet desde `debiancli` y desde Windows 7, y `who` muestra la IP de cada cliente.
+- ☐ Sabes interpretar `Connected`, `Connection refused` y `timed out` (ejercicio 5).
+- ☐ 📎 **PR0301** Wireshark: **Seguir flujo TCP** de la sesión Telnet con el usuario y la contraseña legibles (ejercicio 6). Usa la contraseña ficticia del laboratorio.
+- ☐ Has desactivado Telnet al terminar (ejercicio 7).
 
-**Preguntas de reflexión:**
+**Para comentar en clase:**
 
 1. ¿Por qué el proceso que escucha en el puerto 23 es `inetutils-inetd` y no `telnetd`?
 2. En la captura, ¿por qué las letras del usuario aparecen dobles y las de la contraseña no?
